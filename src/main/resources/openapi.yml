@@ -1,0 +1,56 @@
+openapi: 3.1.0
+info:
+  title: Beispiel API
+  description: Beispiel RESTful API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /todos:
+    get:
+      summary: Alle Todos abrufen
+      operationId: getAllTodos
+      responses:
+        '200':
+          description: Eine Liste von Todos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+    post:
+      summary: Ein neues Todo erstellen
+      operationId: createTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Todo'
+      responses:
+        '200':
+          description: Das erstellte Todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+components:
+  schemas:
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - completed
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Die eindeutige ID des Todos
+        title:
+          type: string
+          description: Der Titel des Todos
+        completed:
+          type: boolean
+          description: Gibt an, ob das Todo abgeschlossen ist oder nicht
