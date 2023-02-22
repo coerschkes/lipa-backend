@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.1
 info:
   title: LIPA API
   description: LIPA-Project API
@@ -8,11 +8,11 @@ servers:
 paths:
   /notes:
     get:
-      summary: Get all notes
-      operationId: getAllNotes
+      summary: Find all notes
+      operationId: findAllNotes
       responses:
-        '200':
-          description: Get all notes available
+        200:
+          description: Find all notes available
           content:
             application/json:
               schema:
@@ -29,13 +29,30 @@ paths:
             schema:
               $ref: '#/components/schemas/Note'
       responses:
-        '201':
+        201:
           description: The created note
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Note'
   /notes/{id}:
+    get:
+      summary: Find a note with a specific id
+      operationId: findNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: find a dedicated note
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Note'
     put:
       summary: Update a note
       operationId: updateNote
@@ -53,11 +70,11 @@ paths:
             schema:
               $ref: '#/components/schemas/Note'
       responses:
-        '200':
+        200:
           description: Object updated
-        '400':
+        400:
           description: Bad request
-        '404':
+        404:
           description: Object not found
 components:
   schemas:
