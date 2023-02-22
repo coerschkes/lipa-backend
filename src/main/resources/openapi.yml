@@ -1,56 +1,84 @@
 openapi: 3.1.0
 info:
-  title: Beispiel API
-  description: Beispiel RESTful API
+  title: LIPA API
+  description: LIPA-Project API
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8080/api/v1
 paths:
-  /todos:
+  /notes:
     get:
-      summary: Alle Todos abrufen
-      operationId: getAllTodos
+      summary: Get all notes
+      operationId: getAllNotes
       responses:
         '200':
-          description: Eine Liste von Todos
+          description: Get all notes available
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Todo'
+                  $ref: '#/components/schemas/Note'
     post:
-      summary: Ein neues Todo erstellen
-      operationId: createTodo
+      summary: Create a new note
+      operationId: createNote
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Todo'
+              $ref: '#/components/schemas/Note'
       responses:
-        '200':
-          description: Das erstellte Todo
+        '201':
+          description: The created note
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Todo'
+                $ref: '#/components/schemas/Note'
+  /notes/{id}:
+    put:
+      summary: Update a note
+      operationId: updateNote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Note'
+      responses:
+        '200':
+          description: Object updated
+        '400':
+          description: Bad request
+        '404':
+          description: Object not found
 components:
   schemas:
-    Todo:
+    Note:
       type: object
-      required:
-        - id
-        - title
-        - completed
       properties:
         id:
           type: integer
           format: int64
-          description: Die eindeutige ID des Todos
         title:
           type: string
-          description: Der Titel des Todos
-        completed:
-          type: boolean
-          description: Gibt an, ob das Todo abgeschlossen ist oder nicht
+        text:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        category:
+          type: string
+      required:
+        - id
+        - title
+        - timestamp
+        - category
+        - text
