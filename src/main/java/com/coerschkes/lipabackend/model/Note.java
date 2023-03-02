@@ -4,9 +4,15 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class Note extends BaseEntity {
-    private String title;
-    private String category;
-    private String text;
+    private final String title;
+    private final String category;
+    private final String text;
+
+    public Note(final String title, final String category, final String text) {
+        this.title = title;
+        this.category = category;
+        this.text = text;
+    }
 
     public String getTitle() {
         return title;

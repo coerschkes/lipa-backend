@@ -31,10 +31,12 @@ paths:
       responses:
         201:
           description: The created note
-          content:
-            application/json:
+          headers:
+            Location:
+              description: URL of the created note
               schema:
-                $ref: '#/components/schemas/Note'
+                type: string
+                format: uri
   /notes/{id}:
     get:
       summary: Find a note with a specific id

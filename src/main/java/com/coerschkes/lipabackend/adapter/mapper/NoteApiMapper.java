@@ -13,4 +13,8 @@ public class NoteApiMapper {
                 .category(note.getCategory())
                 .text(note.getText());
     }
+
+    public Note toNote(final ApiNote apiNote) {
+        return new Note(apiNote.getTitle(), apiNote.getCategory(), apiNote.getCategory());
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 @ApiAdapter
 @RequiredArgsConstructor
 public class NoteApiAdapter implements NotesApi {
@@ -36,8 +38,11 @@ public class NoteApiAdapter implements NotesApi {
     }
 
     @Override
-    public Mono<ResponseEntity<ApiNote>> createNote(Mono<ApiNote> apiNote, ServerWebExchange exchange) {
-        return NotesApi.super.createNote(apiNote, exchange);
+    public Mono<ResponseEntity<Void>> createNote(Mono<ApiNote> apiNote, ServerWebExchange exchange) {
+        return apiNote
+                .map(noteApiMapper::toNote)
+                .map(noteRepository::save)
+                .map(note -> ResponseEntity.created(URI.create(createResourceUrl(note.getId()))).build());
     }
 
     @Override
@@ -47,5 +52,12 @@ public class NoteApiAdapter implements NotesApi {
 
     private static EntityNotFoundException createEntityNotFoundException(Long id) {
         return new EntityNotFoundException("Entity with id '" + id + "' not found.");
+    }
+
+    private String createResourceUrl(final Long id) {
+        if (id == null) {
+            throw new EntityNotFoundException("ID of note cannot be null");
+        }
+        return "/api/v1/notes/" + id;
     }
 }
