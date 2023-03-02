@@ -4,6 +4,7 @@ import com.coerschkes.lipabackend.adapter.mapper.NoteApiMapper;
 import com.coerschkes.lipabackend.adapter.persistence.NoteRepository;
 import com.coerschkes.lipabackend.api.NotesApi;
 import com.coerschkes.lipabackend.model.ApiNote;
+import com.coerschkes.lipabackend.model.Note;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +46,16 @@ public class NoteApiAdapter implements NotesApi {
                 .map(note -> ResponseEntity.created(URI.create(createResourceUrl(note.getId()))).build());
     }
 
+    //todo test if working
     @Override
     public Mono<ResponseEntity<Void>> updateNote(Long id, Mono<ApiNote> apiNote, ServerWebExchange exchange) {
-        return NotesApi.super.updateNote(id, apiNote, exchange);
+        final Note note = noteRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return apiNote
+                .map(noteApiMapper::toNote)
+                .filter(newNote -> !newNote.equals(note))
+                .map(note::updateWith)
+                .map(noteRepository::save)
+                .map(updatedNote -> ResponseEntity.ok().build());
     }
 
     private static EntityNotFoundException createEntityNotFoundException(Long id) {
